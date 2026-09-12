@@ -91,15 +91,16 @@ model Patient {
 }
 
 model Test {
-  id          String   @id @default(cuid())
-  code        String   @unique // E.g., CBC, LFT
-  name        String
-  description String?
-  department  String
-  price       Decimal? @db.Decimal(10, 2)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  code         String   @unique // E.g., CBC, LFT
+  name         String
+  description  String?
+  category     String // E.g., Hematology, Biochemistry
+  displayOrder Int      @default(0)
+  price        Decimal? @db.Decimal(10, 2)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   parameters TestParameter[]
   orderItems LabOrderItem[]
@@ -108,9 +109,13 @@ model Test {
 model TestParameter {
   id         String   @id @default(cuid())
   testId     String
+  code       String?
   name       String
+  shortName  String?
   unit       String?
+  dataType   String   @default("NUMERIC") // NUMERIC, TEXT, SELECT, POSITIVE_NEGATIVE, BOOLEAN
   orderIndex Int      @default(0) // For sorting parameters in a test
+  isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -129,6 +134,7 @@ model ReferenceRange {
   maxValue    Decimal?
   textValue   String? // For non-numeric ranges
   isCritical  Boolean  @default(false)
+  isActive    Boolean  @default(true)
 
   parameter TestParameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)
 }
