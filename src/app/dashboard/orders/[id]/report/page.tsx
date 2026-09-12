@@ -57,6 +57,8 @@ export default async function ReportPreviewPage({ params }: { params: { id: stri
           headerText: null,
           footerText: null,
           technicianName: 'Authorized Signatory',
+          technicianQualification: null,
+          technicianRegistrationNumber: null,
           technicianSig: null,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -111,7 +113,15 @@ export default async function ReportPreviewPage({ params }: { params: { id: stri
 
           {/* Header / Letterhead */}
           <div className="border-b-2 border-gray-800 pb-4 mb-6 text-center">
-              <h1 className="text-2xl font-bold text-gray-900 uppercase tracking-wider">{settings.labName}</h1>
+              {settings.logoUrl ? (
+                  <div className="flex justify-center mb-4">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={settings.logoUrl} alt={`${settings.labName} Logo`} className="h-20 object-contain" />
+                  </div>
+              ) : null}
+
+              {!settings.logoUrl && <h1 className="text-2xl font-bold text-gray-900 uppercase tracking-wider">{settings.labName}</h1>}
+
               {settings.address && <p className="text-sm text-gray-600 mt-1">{settings.address}</p>}
               {(settings.contactPhone || settings.contactEmail) && (
                   <p className="text-xs text-gray-500 mt-1">
@@ -120,7 +130,10 @@ export default async function ReportPreviewPage({ params }: { params: { id: stri
                       {settings.contactEmail && <span>Email: {settings.contactEmail}</span>}
                   </p>
               )}
-              <h2 className="text-lg font-bold text-gray-800 mt-4 uppercase">Laboratory Report</h2>
+
+              {settings.headerText && <p className="text-sm font-semibold text-gray-800 mt-2 italic">{settings.headerText}</p>}
+
+              <h2 className="text-lg font-bold text-gray-800 mt-4 uppercase border-t border-dashed pt-4">Laboratory Report</h2>
           </div>
 
           {/* Patient Details */}
@@ -220,20 +233,23 @@ export default async function ReportPreviewPage({ params }: { params: { id: stri
 
           {/* Footer Area */}
           <div className="mt-16 pt-4 flex justify-between items-end">
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 max-w-[50%]">
                   <p>Report generated on: {new Date().toLocaleString()}</p>
-                  <p className="mt-1">*** End of Report ***</p>
+                  <p className="mt-1 font-bold">*** End of Report ***</p>
+                  {settings.footerText && <p className="mt-4 italic">{settings.footerText}</p>}
               </div>
-              <div className="text-center w-48">
-                  <div className="border-b border-gray-400 h-16 mb-2 flex items-end justify-center pb-2">
-                      {/* Signature placeholder */}
+              <div className="text-center w-56 flex flex-col items-center">
+                  <div className="h-20 mb-2 flex items-end justify-center pb-2 w-full border-b border-gray-400">
                       {settings.technicianSig ? (
-                          <span className="text-gray-400 italic text-sm">Signature Image Area</span>
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={settings.technicianSig} alt="Signature" className="max-h-16 object-contain" />
                       ) : (
                           <span className="text-gray-300 italic text-sm">(Signature)</span>
                       )}
                   </div>
-                  <p className="text-sm font-bold text-gray-800">{settings.technicianName || 'Laboratory Technician'}</p>
+                  <p className="text-sm font-bold text-gray-900">{settings.technicianName || 'Laboratory Technician'}</p>
+                  {settings.technicianQualification && <p className="text-xs text-gray-700 mt-1">{settings.technicianQualification}</p>}
+                  {settings.technicianRegistrationNumber && <p className="text-xs text-gray-500 mt-1">Reg No: {settings.technicianRegistrationNumber}</p>}
               </div>
           </div>
 

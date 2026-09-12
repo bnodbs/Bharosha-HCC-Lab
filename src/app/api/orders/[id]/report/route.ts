@@ -57,6 +57,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
             headerText: null,
             footerText: null,
             technicianName: 'Authorized Signatory',
+            technicianQualification: null,
+            technicianRegistrationNumber: null,
             technicianSig: null,
             createdAt: new Date(),
             updatedAt: new Date()

@@ -27,6 +27,9 @@ export default async function DashboardLayout({
             <li className="mb-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Management</li>
             <li className="mb-2"><a href="/dashboard/tests" className="text-gray-700 hover:text-blue-600 block py-1">Test Master</a></li>
             <li className="mb-2"><a href="/dashboard/reference-ranges" className="text-gray-700 hover:text-blue-600 block py-1">Reference Ranges</a></li>
+            {session.user.role === "ADMIN" && (
+                <li className="mb-2"><a href="/dashboard/settings" className="text-gray-700 hover:text-blue-600 block py-1">Settings</a></li>
+            )}
           </ul>
         </nav>
       </div>
