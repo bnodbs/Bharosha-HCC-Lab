@@ -26,24 +26,24 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  auditLogs     AuditLog[]
+  accounts  Account[]
+  sessions  Session[]
+  auditLogs AuditLog[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -68,62 +68,69 @@ model VerificationToken {
 
 // Medical Application Entities
 model Patient {
-  id            String     @id @default(cuid())
-  patientId     String     @unique // E.g., PAT-2023-0001
+  id            String    @id @default(cuid())
+  patientId     String    @unique // E.g., LAB-2023-000001
   firstName     String
   lastName      String
-  dateOfBirth   DateTime
+  dateOfBirth   DateTime?
+  age           Int?
   gender        String
   contactNumber String?
   address       String?
   bloodGroup    String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  referredBy    String?
+  notes         String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  orders        LabOrder[]
+  orders LabOrder[]
+
+  @@index([patientId])
+  @@index([firstName, lastName])
+  @@index([contactNumber])
 }
 
 model Test {
-  id            String            @id @default(cuid())
-  code          String            @unique // E.g., CBC, LFT
-  name          String
-  description   String?
-  department    String
-  price         Decimal?          @db.Decimal(10, 2)
-  isActive      Boolean           @default(true)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id          String   @id @default(cuid())
+  code        String   @unique // E.g., CBC, LFT
+  name        String
+  description String?
+  department  String
+  price       Decimal? @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  parameters    TestParameter[]
-  orderItems    LabOrderItem[]
+  parameters TestParameter[]
+  orderItems LabOrderItem[]
 }
 
 model TestParameter {
-  id              String            @id @default(cuid())
-  testId          String
-  name            String
-  unit            String?
-  orderIndex      Int               @default(0) // For sorting parameters in a test
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  id         String   @id @default(cuid())
+  testId     String
+  name       String
+  unit       String?
+  orderIndex Int      @default(0) // For sorting parameters in a test
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  test            Test              @relation(fields: [testId], references: [id], onDelete: Cascade)
+  test            Test             @relation(fields: [testId], references: [id], onDelete: Cascade)
   referenceRanges ReferenceRange[]
   results         LabResult[]
 }
 
 model ReferenceRange {
-  id              String        @id @default(cuid())
-  parameterId     String
-  gender          String?       // "M", "F", "Any"
-  minAge          Int?          // in days or years, to be defined by app logic
-  maxAge          Int?
-  minValue        Decimal?
-  maxValue        Decimal?
-  textValue       String?       // For non-numeric ranges
-  isCritical      Boolean       @default(false)
+  id          String   @id @default(cuid())
+  parameterId String
+  gender      String? // "M", "F", "Any"
+  minAge      Int? // in days or years, to be defined by app logic
+  maxAge      Int?
+  minValue    Decimal?
+  maxValue    Decimal?
+  textValue   String? // For non-numeric ranges
+  isCritical  Boolean  @default(false)
 
-  parameter       TestParameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)
+  parameter TestParameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)
 }
 
 enum OrderStatus {
@@ -134,70 +141,70 @@ enum OrderStatus {
 }
 
 model LabOrder {
-  id            String         @id @default(cuid())
-  orderNumber   String         @unique // E.g., ORD-2023-0001
-  patientId     String
-  referredBy    String?        // Doctor name
-  status        OrderStatus    @default(PENDING)
-  notes         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id          String      @id @default(cuid())
+  orderNumber String      @unique // E.g., ORD-2023-0001
+  patientId   String
+  referredBy  String? // Doctor name
+  status      OrderStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  patient       Patient        @relation(fields: [patientId], references: [id])
-  items         LabOrderItem[]
+  patient Patient        @relation(fields: [patientId], references: [id])
+  items   LabOrderItem[]
 }
 
 model LabOrderItem {
-  id            String       @id @default(cuid())
-  orderId       String
-  testId        String
-  status        OrderStatus  @default(PENDING)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id        String      @id @default(cuid())
+  orderId   String
+  testId    String
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
-  order         LabOrder     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  test          Test         @relation(fields: [testId], references: [id])
-  results       LabResult[]
+  order   LabOrder    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  test    Test        @relation(fields: [testId], references: [id])
+  results LabResult[]
 }
 
 model LabResult {
-  id            String        @id @default(cuid())
-  orderItemId   String
-  parameterId   String
-  value         String
-  isAbnormal    Boolean       @default(false)
-  enteredBy     String?       // User ID
-  verifiedBy    String?       // User ID
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id          String   @id @default(cuid())
+  orderItemId String
+  parameterId String
+  value       String
+  isAbnormal  Boolean  @default(false)
+  enteredBy   String? // User ID
+  verifiedBy  String? // User ID
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  orderItem     LabOrderItem  @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
-  parameter     TestParameter @relation(fields: [parameterId], references: [id])
+  orderItem LabOrderItem  @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  parameter TestParameter @relation(fields: [parameterId], references: [id])
 }
 
 model LaboratorySettings {
-  id              String   @id @default(cuid())
-  labName         String
-  address         String?
-  contactPhone    String?
-  contactEmail    String?
-  logoUrl         String?
-  headerText      String?
-  footerText      String?
-  technicianName  String?
-  technicianSig   String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  labName        String
+  address        String?
+  contactPhone   String?
+  contactEmail   String?
+  logoUrl        String?
+  headerText     String?
+  footerText     String?
+  technicianName String?
+  technicianSig  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  userId      String?
-  action      String
-  entityType  String
-  entityId    String
-  details     String?  @db.Text
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String
+  details    String?  @db.Text
+  createdAt  DateTime @default(now())
 
-  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

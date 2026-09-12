@@ -90,3 +90,10 @@ No automated tests are configured yet in this Phase 1 setup. Test infrastructure
 - Configured Prisma with a comprehensive schema for medical laboratory data.
 - Setup NextAuth for credential-based authentication.
 - Created foundational UI layouts for authentication and the main dashboard.
+
+## Features Implemented in Phase 2
+- **Patient Registration**: Added ability to register new patients.
+- **Lab ID Generation**: Automatically generates a unique, immutable Lab ID for each patient in the format `LAB-YYYY-00000X`.
+- **Patient Search & List**: View, paginate, and search patients by Lab ID, Name, or Phone using server-side rendering.
+- **Patient Profiles**: Dedicated page to view patient details and history placeholders.
+- **Edit Functionality**: Authorized roles (Admin, Lab Technician) can update patient demographic information securely.
