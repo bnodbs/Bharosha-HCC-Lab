@@ -122,3 +122,9 @@ No automated tests are configured yet in this Phase 1 setup. Test infrastructure
 - **Abnormal Flagging**: Secure Backend flag generator evaluating strictly NUMERIC tests evaluating LOW/HIGH thresholds inherently.
 - **Order Statuses**: Hierarchical mappings cascading PENDING > PARTIAL > COMPLETED states globally tracking items and global orders cleanly.
 - **Authentication/Roles**: Guard boundaries keeping `ADMIN` and `LAB_TECHNICIAN` access securely integrated on POST/PUT handlers!
+
+## Features Implemented in Phase 6
+- **Report Preview / Printing**: Custom `@media print` tailwind rules formatting distinct test groupings clearly filtering empty/null variables avoiding blank parameters dynamically on single A4.
+- **Settings Fallbacks**: Integration preparing distinct fallback variables representing Laboratory clinic identifiers actively mapping without blocking render paths on null data states.
+- **Historical Snapshots**: Report leverages saved Ref limits rendering static limit boundaries independently from currently mapped Active Admin adjustments explicitly.
+- **Native Print Buttons**: Invokes seamless client window methods bypassing PDF dependencies rendering standard document contexts dynamically.

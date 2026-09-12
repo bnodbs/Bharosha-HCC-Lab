@@ -161,10 +161,15 @@ export default async function PatientProfilePage({
                               {order.status}
                           </span>
                       </td>
-                      <td className="p-3 text-right">
+                      <td className="p-3 text-right space-x-3">
                           <Link href={`/dashboard/orders/${order.id}/results`} className="text-blue-600 hover:text-blue-800 font-medium text-sm">
                               {order.status === 'COMPLETED' ? 'View/Edit Results' : 'Enter Results'}
                           </Link>
+                          {(order.status === 'COMPLETED' || order.status === 'PARTIAL') && (
+                              <Link href={`/dashboard/orders/${order.id}/report`} className="text-gray-600 hover:text-gray-800 font-medium text-sm border-l pl-3 border-gray-300">
+                                  View Report
+                              </Link>
+                          )}
                       </td>
                     </tr>
                   ))}
