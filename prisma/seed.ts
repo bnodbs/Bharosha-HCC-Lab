@@ -288,7 +288,95 @@ async function main() {
     }
   }
 
-  console.log("Seeding complete!");
+  // SEED REFERENCE RANGES (Initial configurable defaults)
+  console.log("Seeding initial reference ranges...");
+
+  const cbcTest = await prisma.test.findUnique({ where: { code: 'CBC' }});
+  if (cbcTest) {
+      const hbParam = await prisma.testParameter.findFirst({ where: { testId: cbcTest.id, name: 'Hemoglobin' }});
+      if (hbParam) {
+          // Male Hb
+          const maleHbExists = await prisma.referenceRange.findFirst({ where: { parameterId: hbParam.id, gender: 'MALE' }});
+          if (!maleHbExists) {
+              await prisma.referenceRange.create({
+                  data: {
+                      parameterId: hbParam.id,
+                      gender: 'MALE',
+                      minValue: 13.0,
+                      maxValue: 17.0,
+                      minAge: 18,
+                      ageUnit: 'YEARS'
+                  }
+              });
+          }
+          // Female Hb
+          const femaleHbExists = await prisma.referenceRange.findFirst({ where: { parameterId: hbParam.id, gender: 'FEMALE' }});
+          if (!femaleHbExists) {
+              await prisma.referenceRange.create({
+                  data: {
+                      parameterId: hbParam.id,
+                      gender: 'FEMALE',
+                      minValue: 12.0,
+                      maxValue: 15.0,
+                      minAge: 18,
+                      ageUnit: 'YEARS'
+                  }
+              });
+          }
+      }
+
+      const tlcParam = await prisma.testParameter.findFirst({ where: { testId: cbcTest.id, shortName: 'TLC' }});
+      if (tlcParam) {
+          const tlcExists = await prisma.referenceRange.findFirst({ where: { parameterId: tlcParam.id, gender: 'ALL' }});
+          if (!tlcExists) {
+              await prisma.referenceRange.create({
+                  data: {
+                      parameterId: tlcParam.id,
+                      gender: 'ALL',
+                      minValue: 4000,
+                      maxValue: 11000
+                  }
+              });
+          }
+      }
+  }
+
+  const rftTest = await prisma.test.findUnique({ where: { code: 'RFT' }});
+  if (rftTest) {
+      const ureaParam = await prisma.testParameter.findFirst({ where: { testId: rftTest.id, name: 'Urea' }});
+      if (ureaParam) {
+          const ureaExists = await prisma.referenceRange.findFirst({ where: { parameterId: ureaParam.id }});
+          if (!ureaExists) {
+              await prisma.referenceRange.create({
+                  data: {
+                      parameterId: ureaParam.id,
+                      gender: 'ALL',
+                      minValue: 15,
+                      maxValue: 40
+                  }
+              });
+          }
+      }
+  }
+
+  const hivTest = await prisma.test.findUnique({ where: { code: 'HIV' }});
+  if (hivTest) {
+      const hivParam = await prisma.testParameter.findFirst({ where: { testId: hivTest.id, name: 'Result' }});
+      if (hivParam) {
+          const hivExists = await prisma.referenceRange.findFirst({ where: { parameterId: hivParam.id }});
+          if (!hivExists) {
+              await prisma.referenceRange.create({
+                  data: {
+                      parameterId: hivParam.id,
+                      gender: 'ALL',
+                      textValue: 'Non-Reactive'
+                  }
+              });
+          }
+      }
+  }
+
+  console.log("Seeding complete! (Note: Initial default reference ranges are provided for structure only. They must be verified against the laboratory's specific analyzer, reagent manufacturer's guidelines, and validated clinical intervals before clinical use.)");
 }
 
 main()

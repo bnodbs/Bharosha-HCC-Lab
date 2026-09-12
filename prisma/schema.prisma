@@ -127,14 +127,17 @@ model TestParameter {
 model ReferenceRange {
   id          String   @id @default(cuid())
   parameterId String
-  gender      String? // "M", "F", "Any"
-  minAge      Int? // in days or years, to be defined by app logic
+  gender      String?  @default("ALL") // "MALE", "FEMALE", "ALL"
+  minAge      Int?
   maxAge      Int?
-  minValue    Decimal?
-  maxValue    Decimal?
-  textValue   String? // For non-numeric ranges
+  ageUnit     String?  @default("YEARS") // "DAYS", "MONTHS", "YEARS"
+  minValue    Decimal? @db.Decimal(10, 4)
+  maxValue    Decimal? @db.Decimal(10, 4)
+  textValue   String?  @db.Text // For non-numeric ranges
   isCritical  Boolean  @default(false)
   isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   parameter TestParameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)
 }

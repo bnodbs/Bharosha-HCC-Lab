@@ -97,3 +97,19 @@ No automated tests are configured yet in this Phase 1 setup. Test infrastructure
 - **Patient Search & List**: View, paginate, and search patients by Lab ID, Name, or Phone using server-side rendering.
 - **Patient Profiles**: Dedicated page to view patient details and history placeholders.
 - **Edit Functionality**: Authorized roles (Admin, Lab Technician) can update patient demographic information securely.
+
+## Features Implemented in Phase 3
+- **Test Master Setup**: Structured test data model separating tests (Panels) and granular parameters.
+- **Categorization**: Dynamically filters distinct categories automatically.
+- **Parameter Formatting**: Supports textual, numeric, qualitative, and exact select types per parameter.
+- **Data Seed**: Safe idempotent seed generator inserting defaults without duplications.
+- **Full UI Integration**: Add, Edit, Filter capabilities securely built restricted to ADMIN access properly protecting core data limits.
+
+## Features Implemented in Phase 4
+- **Reference Range Architecture**: Separates individual reference ranges natively supporting numeric thresholds AND qualitative textual comparisons matching the specific test configuration limits.
+- **Admin Management**: Dedicated management portal connecting tests to limits safely restricting entry boundaries to ADMINs.
+- **Age/Sex-Specific Ranges**: Reference models include mapping capability strictly linking `DAYS`, `MONTHS`, `YEARS` boundaries across Universal, Male, or Female constraints.
+- **Qualitative Reference Values**: Exposes `textValue` for limits requiring `Negative`, `Positive` checks on qualitative assays.
+- **Clinical Verification Warning**: Seeded structures emphasize warnings ensuring verification limits properly match local clinical limits before rollout.
+- **How to Configure Ranges**: Navigate to `/dashboard/reference-ranges` where Admins can link parameter rules actively enabling complex checks efficiently.
+- **Future Integration Tool**: Prepares `getReferenceRange()` lookup helper evaluating exact patient variables prioritizing strict configurations cleanly.
