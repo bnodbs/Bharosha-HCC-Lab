@@ -113,3 +113,12 @@ No automated tests are configured yet in this Phase 1 setup. Test infrastructure
 - **Clinical Verification Warning**: Seeded structures emphasize warnings ensuring verification limits properly match local clinical limits before rollout.
 - **How to Configure Ranges**: Navigate to `/dashboard/reference-ranges` where Admins can link parameter rules actively enabling complex checks efficiently.
 - **Future Integration Tool**: Prepares `getReferenceRange()` lookup helper evaluating exact patient variables prioritizing strict configurations cleanly.
+
+## Features Implemented in Phase 5
+- **Lab Order Workflow**: Complete end-to-end routing integrating selected individual Test panels tied uniquely to generated Accession/Order Numbers explicitly mapped to patient history.
+- **Result Entry Workflow**: Technician UI providing direct input mappings capturing typed limits directly over Zod coercion models.
+- **Result Data Model**: Dynamic table modeling extracting `LabResult` fields tracking `status`, user timestamps, units and limits properly.
+- **Reference Range Integration**: Real-time snapshots binding live Reference Limits mapped from specific Patient age/sex configurations safely into DB histories protecting future clinical limits from retroactive drift!
+- **Abnormal Flagging**: Secure Backend flag generator evaluating strictly NUMERIC tests evaluating LOW/HIGH thresholds inherently.
+- **Order Statuses**: Hierarchical mappings cascading PENDING > PARTIAL > COMPLETED states globally tracking items and global orders cleanly.
+- **Authentication/Roles**: Guard boundaries keeping `ADMIN` and `LAB_TECHNICIAN` access securely integrated on POST/PUT handlers!

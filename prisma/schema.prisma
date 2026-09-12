@@ -156,6 +156,7 @@ model LabOrder {
   referredBy  String? // Doctor name
   status      OrderStatus @default(PENDING)
   notes       String?
+  createdBy   String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -177,18 +178,25 @@ model LabOrderItem {
 }
 
 model LabResult {
-  id          String   @id @default(cuid())
-  orderItemId String
-  parameterId String
-  value       String
-  isAbnormal  Boolean  @default(false)
-  enteredBy   String? // User ID
-  verifiedBy  String? // User ID
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  orderItemId  String
+  parameterId  String
+  value        String   @db.Text
+  abnormalFlag String?  @default("NORMAL") // NORMAL, LOW, HIGH, ABNORMAL
+  refMinValue  Decimal? @db.Decimal(10, 4)
+  refMaxValue  Decimal? @db.Decimal(10, 4)
+  refTextValue String?  @db.Text
+  unit         String?
+  status       String?  @default("ENTERED")
+  enteredBy    String? // User ID
+  verifiedBy   String? // User ID
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   orderItem LabOrderItem  @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
   parameter TestParameter @relation(fields: [parameterId], references: [id])
+
+  @@unique([orderItemId, parameterId])
 }
 
 model LaboratorySettings {
