@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 export async function GET(request: Request) {
   try {
@@ -89,6 +90,8 @@ export async function PUT(request: Request) {
             data: validatedData
         });
     }
+
+    await logAuditAction(session.user.id, AuditAction.UPDATE_SETTINGS, AuditEntity.LAB_SETTINGS, settings.id, `Laboratory settings updated`);
 
     return NextResponse.json(settings);
   } catch (error: any) {

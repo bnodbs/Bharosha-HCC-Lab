@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
 import { getReferenceRange } from "@/lib/referenceRanges/lookup";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const resultItemSchema = z.object({
   id: z.string().min(1),
@@ -131,6 +132,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
              })
         }
     });
+
+    await logAuditAction(session.user.id, AuditAction.SUBMIT_RESULTS, AuditEntity.LAB_ORDER, params.id, `Results updated for order ${order.orderNumber}`);
 
     return NextResponse.json({ message: "Results saved successfully" });
   } catch (error: any) {

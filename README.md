@@ -133,3 +133,8 @@ No automated tests are configured yet in this Phase 1 setup. Test infrastructure
 - **Dynamic Settings Interface**: Centralized settings component mapping Lab Name, Address, Contacts natively integrating Technician IDs preventing hard-coding instances efficiently.
 - **Global Print Configuration**: Dynamically cascades Logo URLs, Header strings, and Technician metadata securely scaling standard views explicitly avoiding external integrations relying cleanly on native URLs safely mapping limits.
 - **Secure Fallbacks**: Defaults explicitly generate missing parameters matching standard states seamlessly ensuring reporting environments compile uninterrupted correctly prioritizing `ADMIN` only modifications efficiently.
+
+## Features Implemented in Phase 8
+- **Global Dashboard**: Metrics extracted efficiently combining live Patient, Order, and Results aggregates.
+- **Search Histories**: Added `orders/page.tsx` integrating deep query mappings pulling Order IDs + Name filters simultaneously securely.
+- **Audit Logs**: Developed robust tracking systems actively mapping mutations safely across Patients, Tests, Params, Ranges, and Results storing history globally for Admins securely without throwing blocking transaction errors.

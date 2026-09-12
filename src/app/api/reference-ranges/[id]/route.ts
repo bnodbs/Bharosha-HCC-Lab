@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const rangeUpdateSchema = z.object({
   gender: z.enum(["MALE", "FEMALE", "ALL"]).optional(),
@@ -55,6 +56,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       data: validatedData,
     });
 
+    await logAuditAction(session.user.id, AuditAction.UPDATE, AuditEntity.REFERENCE_RANGE, range.id, `Updated reference range ${range.id}`);
+
     return NextResponse.json({ range });
   } catch (error: any) {
     console.error("Reference Range Update Error:", error);
@@ -77,6 +80,8 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       where: { id: params.id },
       data: { isActive: false },
     });
+
+    await logAuditAction(session.user.id, AuditAction.DELETE, AuditEntity.REFERENCE_RANGE, range.id, `Deactivated reference range ${range.id}`);
 
     return NextResponse.json({ range });
   } catch (error: any) {

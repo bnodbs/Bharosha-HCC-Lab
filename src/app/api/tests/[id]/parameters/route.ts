@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const parameterSchema = z.object({
   code: z.string().optional(),
@@ -35,6 +36,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
         testId: params.id
       },
     });
+
+    await logAuditAction(session.user.id, AuditAction.CREATE, AuditEntity.TEST_PARAMETER, parameter.id, `Created parameter: ${parameter.name}`);
 
     return NextResponse.json({ parameter }, { status: 201 });
   } catch (error: any) {

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const testUpdateSchema = z.object({
   name: z.string().min(1).optional(),
@@ -57,6 +58,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       data: validatedData,
     });
 
+    await logAuditAction(session.user.id, AuditAction.UPDATE, AuditEntity.TEST_MASTER, test.id, `Updated test: ${test.code}`);
+
     return NextResponse.json({ test });
   } catch (error: any) {
     console.error("Test Update Error:", error);
@@ -79,6 +82,8 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       where: { id: params.id },
       data: { isActive: false },
     });
+
+    await logAuditAction(session.user.id, AuditAction.DELETE, AuditEntity.TEST_MASTER, test.id, `Deactivated test: ${test.code}`);
 
     return NextResponse.json({ test });
   } catch (error: any) {

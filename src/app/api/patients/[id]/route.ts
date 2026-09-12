@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const patientSchema = z.object({
   firstName: z.string().min(1),
@@ -46,6 +47,8 @@ export async function PUT(
         notes: validatedData.notes,
       },
     });
+
+    await logAuditAction(session.user.id, AuditAction.UPDATE, AuditEntity.PATIENT, patient.id, `Patient updated: ${patient.patientId}`);
 
     return NextResponse.json({ patient });
   } catch (error: any) {

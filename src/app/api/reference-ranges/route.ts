@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const rangeSchema = z.object({
   parameterId: z.string().min(1),
@@ -90,6 +91,8 @@ export async function POST(request: Request) {
     const range = await prisma.referenceRange.create({
       data: validatedData,
     });
+
+    await logAuditAction(session.user.id, AuditAction.CREATE, AuditEntity.REFERENCE_RANGE, range.id, `Created reference range for parameter ${range.parameterId}`);
 
     return NextResponse.json({ range }, { status: 201 });
   } catch (error: any) {

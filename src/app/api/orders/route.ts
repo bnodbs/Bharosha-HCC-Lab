@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import { generateOrderId } from "@/lib/orders/generateOrderId";
 import * as z from "zod";
+import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const orderSchema = z.object({
   patientId: z.string().min(1),
@@ -75,6 +76,8 @@ export async function POST(request: Request) {
 
         return newOrder;
     });
+
+    await logAuditAction(session.user.id, AuditAction.CREATE, AuditEntity.LAB_ORDER, order.id, `Order created: ${order.orderNumber} for patient ${validatedData.patientId}`);
 
     return NextResponse.json({ order }, { status: 201 });
   } catch (error: any) {
