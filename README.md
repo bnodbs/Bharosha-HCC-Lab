@@ -138,3 +138,26 @@ No automated tests are configured yet in this Phase 1 setup. Test infrastructure
 - **Global Dashboard**: Metrics extracted efficiently combining live Patient, Order, and Results aggregates.
 - **Search Histories**: Added `orders/page.tsx` integrating deep query mappings pulling Order IDs + Name filters simultaneously securely.
 - **Audit Logs**: Developed robust tracking systems actively mapping mutations safely across Patients, Tests, Params, Ranges, and Results storing history globally for Admins securely without throwing blocking transaction errors.
+
+## Features Implemented in Phase 9
+- **Admin Data Export**: CSV export functionality enabling strictly bound Admin access preventing direct database exposures while mapping exact relational keys cleanly tracking orders/patients correctly formatting cells gracefully bypassing formula vulnerabilities natively!
+- **Security Headers**: Bound robust `X-Frame-Options` globally hardening basic next configuration bounds avoiding injection risks cleanly.
+- **Database Backup Instructions**: Explicit configurations explaining Pg dumps separating source backups from relational data cleanly ensuring administrators aren't mistakenly discarding native relational logs!
+
+## DATABASE BACKUP AND RESTORE
+**Warning:** The `bharosha-hcc-lab-phase-X.zip` files generated during development contain **source code only**. They DO NOT contain your PostgreSQL database, patient records, or lab results.
+
+To safely backup and restore the live database, you must use standard PostgreSQL utilities. Do not attempt to export or import the entire database through the browser.
+
+### 1. Backup the Database
+Run this command on the server hosting the database (replace `username`, `localhost`, and `bharosha_lab` as needed):
+```bash
+pg_dump -U username -h localhost -F c -f "bharosha_backup_$(date +%F).dump" bharosha_lab
+```
+*Recommendation:* Keep backups safely encrypted in an external, off-site storage location disconnected from the application directory.
+
+### 2. Restore the Database
+To restore a backup file to a new or existing database:
+```bash
+pg_restore -U username -h localhost -d bharosha_lab -1 "bharosha_backup_YYYY-MM-DD.dump"
+```

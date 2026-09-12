@@ -57,10 +57,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
             // We fetch the existing result to get the parameter details safely
             const existingResult = await tx.labResult.findUnique({
                 where: { id: item.id },
-                include: { parameter: true }
+                include: { parameter: true, orderItem: true }
             });
 
             if (!existingResult) continue;
+
+            // SECURITY: Ensure the result being updated actually belongs to the Order ID in the URL.
+            if (existingResult.orderItem.orderId !== params.id) {
+                throw new Error(`Unauthorized attempt to update result for a different order.`);
+            }
 
             const isValueEmpty = item.value === null || item.value === undefined || item.value.trim() === "";
 

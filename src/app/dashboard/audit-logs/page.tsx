@@ -17,7 +17,7 @@ export default async function AuditLogsPage({
 
   const actionFilter = searchParams?.action || "";
   const entityFilter = searchParams?.entity || "";
-  const currentPage = Number(searchParams?.page) || 1;
+  const currentPage = Math.max(1, Number(searchParams?.page) || 1);
   const itemsPerPage = 20;
 
   const whereClause: any = {};

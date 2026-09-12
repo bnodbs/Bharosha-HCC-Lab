@@ -14,7 +14,7 @@ export default async function OrdersHistoryPage({
 
   const query = searchParams?.query || "";
   const statusFilter = searchParams?.status || "";
-  const currentPage = Number(searchParams?.page) || 1;
+  const currentPage = Math.max(1, Number(searchParams?.page) || 1);
   const itemsPerPage = 15;
 
   const whereClause: any = {};

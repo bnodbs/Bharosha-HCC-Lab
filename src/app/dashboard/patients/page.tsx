@@ -13,7 +13,7 @@ export default async function PatientsPage({
   if (!session) redirect("/login");
 
   const query = searchParams?.query || "";
-  const currentPage = Number(searchParams?.page) || 1;
+  const currentPage = Math.max(1, Number(searchParams?.page) || 1);
   const itemsPerPage = 10;
 
   const whereClause = query
