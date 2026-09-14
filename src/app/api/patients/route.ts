@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import { generateLabId } from "@/lib/patients/generateLabId";
 import * as z from "zod";
-import { logAuditAction, AuditAction, AuditEntity } from "@/lib/audit/logger";
 
 const patientSchema = z.object({
   firstName: z.string().min(1),
@@ -32,23 +31,29 @@ export async function POST(request: Request) {
 
     const patientId = await generateLabId();
 
-    const patient = await prisma.patient.create({
-      data: {
+    const patientData: any = {
         patientId,
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
-        age: typeof validatedData.age === 'number' ? validatedData.age : null,
-        dateOfBirth: validatedData.dateOfBirth ? new Date(validatedData.dateOfBirth) : null,
         gender: validatedData.gender,
         contactNumber: validatedData.contactNumber,
         address: validatedData.address,
         bloodGroup: validatedData.bloodGroup,
         referredBy: validatedData.referredBy,
         notes: validatedData.notes,
-      },
-    });
+    };
 
-    await logAuditAction(session.user.id, AuditAction.CREATE, AuditEntity.PATIENT, patient.id, `Patient registered: ${patient.patientId}`);
+    if (typeof validatedData.age === 'number') {
+        patientData.age = validatedData.age;
+    }
+
+    if (validatedData.dateOfBirth) {
+        patientData.dateOfBirth = new Date(validatedData.dateOfBirth);
+    }
+
+    const patient = await prisma.patient.create({
+      data: patientData,
+    });
 
     return NextResponse.json({ patient }, { status: 201 });
   } catch (error: any) {

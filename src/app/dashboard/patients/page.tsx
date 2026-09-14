@@ -13,7 +13,7 @@ export default async function PatientsPage({
   if (!session) redirect("/login");
 
   const query = searchParams?.query || "";
-  const currentPage = Math.max(1, Number(searchParams?.page) || 1);
+  const currentPage = Number(searchParams?.page) || 1;
   const itemsPerPage = 10;
 
   const whereClause = query
@@ -35,12 +35,6 @@ export default async function PatientsPage({
     orderBy: { createdAt: "desc" },
     skip: (currentPage - 1) * itemsPerPage,
     take: itemsPerPage,
-    include: {
-        orders: {
-            orderBy: { createdAt: 'desc' },
-            take: 1
-        }
-    }
   });
 
   return (
@@ -80,7 +74,6 @@ export default async function PatientsPage({
                 <th className="p-3 font-semibold text-center">Age/DOB</th>
                 <th className="p-3 font-semibold text-center">Gender</th>
                 <th className="p-3 font-semibold">Phone</th>
-                <th className="p-3 font-semibold">Latest Order</th>
                 <th className="p-3 font-semibold text-right">Actions</th>
               </tr>
             </thead>
@@ -98,34 +91,18 @@ export default async function PatientsPage({
                     </Link>
                   </td>
                   <td className="p-3 text-center text-sm">
-                    {patient.age !== null && patient.age !== undefined ? `${patient.age}y` : patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : '-'}
+                    {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : '-'}
                   </td>
                   <td className="p-3 text-center text-sm">{patient.gender}</td>
                   <td className="p-3 text-sm">{patient.contactNumber || '-'}</td>
-                  <td className="p-3 text-sm">
-                      {patient.orders.length > 0 ? (
-                          <span className={`px-2 py-1 rounded text-xs font-bold ${
-                              patient.orders[0].status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                              patient.orders[0].status === 'PARTIAL' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
-                          }`}>
-                              {patient.orders[0].status}
-                          </span>
-                      ) : (
-                          <span className="text-gray-400">None</span>
-                      )}
-                  </td>
                   <td className="p-3 text-right space-x-3">
                     <Link href={`/dashboard/patients/${patient.id}`} className="text-blue-600 hover:text-blue-800 font-medium text-sm">View</Link>
-                    {(session.user.role === "ADMIN" || session.user.role === "LAB_TECHNICIAN") && (
-                      <Link href={`/dashboard/patients/${patient.id}/edit`} className="text-gray-500 hover:text-gray-800 font-medium text-sm">Edit</Link>
-                    )}
                   </td>
                 </tr>
               ))}
               {patients.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-gray-500">
+                  <td colSpan={6} className="p-8 text-center text-gray-500">
                     No patients found.
                   </td>
                 </tr>

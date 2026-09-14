@@ -4,7 +4,6 @@ export async function generateLabId(): Promise<string> {
   const currentYear = new Date().getFullYear();
   const prefix = `LAB-${currentYear}-`;
 
-  // We loop to handle any unique constraint collision during generation
   let retries = 3;
   let nextSequence = 1;
 
@@ -33,7 +32,6 @@ export async function generateLabId(): Promise<string> {
     const paddedSequence = String(nextSequence).padStart(6, '0');
     const proposedId = `${prefix}${paddedSequence}`;
 
-    // Verify it doesn't exist yet before returning
     const existing = await prisma.patient.findUnique({
       where: { patientId: proposedId }
     });
@@ -43,7 +41,7 @@ export async function generateLabId(): Promise<string> {
     }
 
     retries--;
-    nextSequence++; // Push sequence forward and retry
+    nextSequence++;
   }
 
   throw new Error("Failed to generate unique Lab ID after multiple attempts.");
