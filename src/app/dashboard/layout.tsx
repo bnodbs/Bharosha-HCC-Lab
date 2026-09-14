@@ -22,7 +22,10 @@ export default async function DashboardLayout({
         </div>
         <nav className="p-4">
           <ul>
-            <li className="mb-2"><a href="/dashboard" className="text-gray-700 hover:text-blue-600">Dashboard</a></li>
+            <li className="mb-2"><a href="/dashboard" className="text-gray-700 hover:text-blue-600 block py-1">Dashboard</a></li>
+            <li className="mb-2"><a href="/dashboard/patients" className="text-gray-700 hover:text-blue-600 block py-1">Patients</a></li>
+            <li className="mb-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Management</li>
+            <li className="mb-2"><a href="/dashboard/tests" className="text-gray-700 hover:text-blue-600 block py-1">Test Master</a></li>
           </ul>
         </nav>
       </div>
