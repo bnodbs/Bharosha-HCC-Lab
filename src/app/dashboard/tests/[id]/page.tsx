@@ -93,6 +93,9 @@ export default async function TestProfilePage({
                         name="showInactiveParams"
                         value="true"
                         defaultChecked={showInactive}
+                        onChange={(e) => {
+                          e.target.form?.submit();
+                        }}
                         className="rounded text-blue-600 focus:ring-blue-500"
                     />
                     <span>Show Inactive</span>
