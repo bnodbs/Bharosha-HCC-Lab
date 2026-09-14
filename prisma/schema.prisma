@@ -124,18 +124,46 @@ model TestParameter {
   results         LabResult[]
 }
 
+enum GenderApplicability {
+  ALL
+  MALE
+  FEMALE
+}
+
+enum AgeUnit {
+  DAYS
+  MONTHS
+  YEARS
+}
+
 model ReferenceRange {
-  id          String   @id @default(cuid())
+  id          String              @id @default(cuid())
   parameterId String
-  gender      String? // "M", "F", "Any"
-  minAge      Int? // in days or years, to be defined by app logic
+
+  gender      GenderApplicability @default(ALL)
+
+  // Age range definition. Boundaries are INCLUSIVE.
+  minAge      Int?
   maxAge      Int?
-  minValue    Decimal?
-  maxValue    Decimal?
-  textValue   String? // For non-numeric ranges
-  isCritical  Boolean  @default(false)
+  ageUnit     AgeUnit             @default(YEARS)
+
+  // Numeric limits (inclusive)
+  lowerLimit  Decimal?            @db.Decimal(10, 4)
+  upperLimit  Decimal?            @db.Decimal(10, 4)
+  unit        String?
+
+  // For qualitative / non-numeric results
+  textValue   String?
+
+  description String?
+  isActive    Boolean             @default(true)
+
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
   parameter TestParameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)
+
+  @@index([parameterId])
 }
 
 enum OrderStatus {
@@ -172,19 +200,39 @@ model LabOrderItem {
   results LabResult[]
 }
 
+enum ResultFlag {
+  NORMAL
+  LOW
+  HIGH
+  ABNORMAL
+}
+
 model LabResult {
-  id          String   @id @default(cuid())
-  orderItemId String
-  parameterId String
-  value       String
-  isAbnormal  Boolean  @default(false)
-  enteredBy   String? // User ID
-  verifiedBy  String? // User ID
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String      @id @default(cuid())
+  orderItemId      String
+  parameterId      String
+
+  // The actual entered result
+  value            String
+  numericValue     Decimal?    @db.Decimal(10, 4) // For safe numeric comparison
+
+  // Snapshot of reference range at the time of entry to prevent historical distortion
+  referenceRange   String?     // E.g., "13.0 - 17.0"
+  unit             String?
+
+  flag             ResultFlag  @default(NORMAL)
+  comments         String?     @db.Text
+
+  enteredBy        String? // User ID
+  verifiedBy       String? // User ID
+
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 
   orderItem LabOrderItem  @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
   parameter TestParameter @relation(fields: [parameterId], references: [id])
+
+  @@unique([orderItemId, parameterId]) // Prevent duplicate results for the same parameter in an order item
 }
 
 model LaboratorySettings {

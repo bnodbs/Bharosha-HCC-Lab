@@ -10,7 +10,15 @@ async function main() {
       category: 'Hematology',
       displayOrder: 1,
       parameters: [
-        { name: 'Hemoglobin', unit: 'g/dL', dataType: 'NUMERIC' },
+        {
+          name: 'Hemoglobin',
+          unit: 'g/dL',
+          dataType: 'NUMERIC',
+          referenceRanges: [
+            { gender: 'MALE', lowerLimit: 13.0, upperLimit: 17.0, ageUnit: 'YEARS', description: 'Adult Male' },
+            { gender: 'FEMALE', lowerLimit: 12.0, upperLimit: 15.0, ageUnit: 'YEARS', description: 'Adult Female' }
+          ]
+        },
         { name: 'RBC Count', unit: 'millions/cu.mm', dataType: 'NUMERIC' },
         { name: 'Total Leukocyte Count (WBC)', shortName: 'TLC', unit: 'cells/cu.mm', dataType: 'NUMERIC' },
         { name: 'Platelet Count', unit: 'lakhs/cu.mm', dataType: 'NUMERIC' },
@@ -267,22 +275,51 @@ async function main() {
     });
 
     for (let i = 0; i < parameters.length; i++) {
-        const param = parameters[i];
-        const existingParam = existingParams.find(p => p.name === param.name);
+        const { referenceRanges, ...paramFields } = parameters[i] as any;
+        let paramId: string;
+
+        const existingParam = existingParams.find(p => p.name === paramFields.name);
 
         if (existingParam) {
             await prisma.testParameter.update({
                 where: { id: existingParam.id },
-                data: { ...param, orderIndex: i }
+                data: { ...paramFields, orderIndex: i }
             });
+            paramId = existingParam.id;
         } else {
-             await prisma.testParameter.create({
+             const newParam = await prisma.testParameter.create({
                 data: {
                     testId: createdTest.id,
-                    ...param,
+                    ...paramFields,
                     orderIndex: i
                 }
-             })
+             });
+             paramId = newParam.id;
+        }
+
+        // Add reference ranges idempotenly if provided
+        if (referenceRanges && referenceRanges.length > 0) {
+           const existingRanges = await prisma.referenceRange.findMany({
+               where: { parameterId: paramId }
+           });
+
+           for (const range of referenceRanges) {
+               // Check if an exact match exists based on gender and age bounds
+               const rangeExists = existingRanges.some(r =>
+                   r.gender === range.gender &&
+                   r.minAge === (range.minAge || null) &&
+                   r.maxAge === (range.maxAge || null)
+               );
+
+               if (!rangeExists) {
+                   await prisma.referenceRange.create({
+                       data: {
+                           parameterId: paramId,
+                           ...range
+                       }
+                   });
+               }
+           }
         }
     }
   }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Link from "next/link";
 
 const paramSchema = z.object({
   code: z.string().optional(),
@@ -160,6 +161,7 @@ export default function ParameterList({
                 <td className="p-3 text-sm text-gray-600">{param.unit || '-'}</td>
                 {isAdmin && (
                   <td className="p-3 text-sm text-right space-x-3">
+                    <Link href={`/dashboard/tests/${testId}/parameters/${param.id}/ranges`} className="text-blue-600 hover:underline">Ranges</Link>
                     <button onClick={() => openEditModal(param)} className="text-blue-600 hover:underline">Edit</button>
                     <button onClick={() => handleDelete(param.id)} className="text-red-600 hover:underline">Remove</button>
                   </td>
