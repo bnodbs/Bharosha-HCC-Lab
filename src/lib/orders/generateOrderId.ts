@@ -1,14 +1,16 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
-export async function generateOrderId(): Promise<string> {
-  // Use a transaction or robust locking if this were a high concurrency system.
-  // For safety, we query the latest order and increment safely.
+export async function generateOrderId(
+  tx: Prisma.TransactionClient = prisma
+): Promise<string> {
+  // Uses the provided transaction client to ensure atomic operations
   // Format: ORD-YYYY-XXXXXX
   const date = new Date();
   const year = date.getFullYear();
   const prefix = `ORD-${year}-`;
 
-  const latestOrder = await prisma.labOrder.findFirst({
+  const latestOrder = await tx.labOrder.findFirst({
     where: {
       orderNumber: {
         startsWith: prefix,
@@ -29,7 +31,7 @@ export async function generateOrderId(): Promise<string> {
 
   if (isNaN(currentNum)) {
     // Fallback if formatting was broken
-    const count = await prisma.labOrder.count({ where: { orderNumber: { startsWith: prefix } } });
+    const count = await tx.labOrder.count({ where: { orderNumber: { startsWith: prefix } } });
     return `${prefix}${(count + 1).toString().padStart(6, '0')}`;
   }
 

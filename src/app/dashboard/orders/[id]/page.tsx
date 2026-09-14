@@ -67,7 +67,7 @@ export default async function OrderDetailsPage({
               Created: {new Date(order.createdAt).toLocaleString()}
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-right flex flex-col items-end gap-2">
             <span className={`px-3 py-1 rounded-full text-sm font-bold ${
               order.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
               order.status === 'PARTIAL' ? 'bg-yellow-100 text-yellow-800' :
@@ -75,6 +75,14 @@ export default async function OrderDetailsPage({
             }`}>
               {order.status}
             </span>
+            {(order.status === 'PARTIAL' || order.status === 'COMPLETED') && (
+               <Link
+                  href={`/dashboard/orders/${order.id}/report`}
+                  className="mt-2 px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded hover:bg-gray-700 shadow-sm"
+               >
+                 View / Print Report
+               </Link>
+            )}
           </div>
         </div>
 

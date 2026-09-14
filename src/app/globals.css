@@ -31,3 +31,14 @@ body {
     text-wrap: balance;
   }
 }
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}

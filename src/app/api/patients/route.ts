@@ -55,6 +55,16 @@ export async function POST(request: Request) {
       data: patientData,
     });
 
+    await prisma.auditLog.create({
+      data: {
+        userId: session.user.id,
+        action: "CREATE_PATIENT",
+        entityType: "Patient",
+        entityId: patient.id,
+        details: `Registered new patient: ${patient.patientId} (${patient.firstName} ${patient.lastName})`
+      }
+    });
+
     return NextResponse.json({ patient }, { status: 201 });
   } catch (error: any) {
     console.error("Patient Registration Error:", error);

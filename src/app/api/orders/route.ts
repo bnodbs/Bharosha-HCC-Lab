@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
     // Use transaction to create order and items
     const order = await prisma.$transaction(async (tx) => {
-      const orderNumber = await generateOrderId();
+      const orderNumber = await generateOrderId(tx);
 
       return tx.labOrder.create({
         data: {

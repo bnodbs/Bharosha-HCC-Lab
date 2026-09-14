@@ -41,12 +41,18 @@ export async function POST(
       return NextResponse.json({ message: "Order not found" }, { status: 404 });
     }
 
-    // Verify all submitted items belong to this order
+    // Verify all submitted items belong to this order and that parameters actually belong to the tests ordered
     const validOrderItemIds = order.items.map(i => i.id);
     const invalidItems = validatedData.results.filter(r => !validOrderItemIds.includes(r.orderItemId));
     if (invalidItems.length > 0) {
         return NextResponse.json({ message: "Invalid order items submitted" }, { status: 400 });
     }
+
+    // Map ordered test items to their valid parameter IDs to prevent cross-test parameter injection
+    const orderItemTestMap = order.items.reduce((acc, item) => {
+      acc[item.id] = item.testId;
+      return acc;
+    }, {} as Record<string, string>);
 
     // Process results within a transaction to maintain integrity
     await prisma.$transaction(async (tx) => {
@@ -60,6 +66,12 @@ export async function POST(
         });
 
         if (!parameter) continue;
+
+        // Security Check: Verify this parameter actually belongs to the test ordered in this item
+        const expectedTestId = orderItemTestMap[result.orderItemId];
+        if (parameter.testId !== expectedTestId) {
+            throw new Error(`Parameter ${parameter.name} does not belong to the ordered test.`);
+        }
 
         let numericValue = null;
         let flag = "NORMAL";

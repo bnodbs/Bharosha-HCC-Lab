@@ -30,6 +30,14 @@ export default async function DashboardLayout({
 
             <li className="mb-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Laboratory</li>
             <li className="mb-2"><Link href="/dashboard/orders" className="text-gray-700 hover:text-blue-600 block py-1">Orders</Link></li>
+
+            {session?.user?.role === "ADMIN" && (
+                <>
+                  <li className="mb-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Admin</li>
+                  <li className="mb-2"><Link href="/dashboard/settings" className="text-gray-700 hover:text-blue-600 block py-1">Lab Settings</Link></li>
+                  <li className="mb-2"><Link href="/dashboard/audit-logs" className="text-gray-700 hover:text-blue-600 block py-1">Audit Logs</Link></li>
+                </>
+            )}
           </ul>
         </nav>
       </div>

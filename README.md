@@ -83,7 +83,7 @@ Example hashed password for 'password123':
 \`$2y$10$YourHashedPasswordStringHere\` (You can generate this using a Node script or online tool).
 
 ## How to run tests
-No automated tests are configured yet in this Phase 1 setup. Test infrastructure will be added in subsequent phases.
+**Current Limitation:** No automated test runner (like Jest or Playwright) is configured yet in this Phase 5 setup. Test infrastructure will be added in subsequent phases. Validation is currently performed via TypeScript compilation (`npm run build`) and Prisma schema validation.
 
 ## Features Implemented in Phase 1
 - Initialized Next.js project with TypeScript and Tailwind CSS.
@@ -104,3 +104,15 @@ No automated tests are configured yet in this Phase 1 setup. Test infrastructure
 - **Parameter Formatting**: Supports textual, numeric, qualitative, and exact select types per parameter.
 - **Data Seed**: Safe idempotent seed generator inserting defaults without duplications.
 - **Full UI Integration**: Add, Edit, Filter capabilities securely built restricted to ADMIN access properly protecting core data limits.
+
+## Features Implemented in Phase 4
+- **Reference Range Management**: Comprehensive, Admin-managed reference ranges tied directly to Test Parameters.
+- **Sex and Age Resolution**: Supports setting boundaries based on Sex (ALL, MALE, FEMALE) and strictly inclusive Age logic (Days, Months, Years).
+- **Security Check**: Only users with the `ADMIN` role may manage reference limits; ensuring clinical laboratory safety.
+
+## Features Implemented in Phase 5
+- **Laboratory Order Workflow**: Implements the core clinical workflow: *Patient → Order → Tests → Parameters → Results*.
+- **Atomic Order Creation**: Transactions strictly govern the generation of safe, sequential accession IDs (e.g., `ORD-2023-000001`).
+- **Result Entry & Dynamic Flags**: Test parameter inputs render dynamically based on their `dataType`. Numeric inputs are cross-checked against applicable active reference ranges based on patient demographics.
+- **Historical Reference Snapshots**: Captures a static text snapshot of the exact Reference Range and Flag (LOW, NORMAL, HIGH) at the time of entry, preventing data distortion if lab limits change in the future.
+- **Role Permissions**: `ADMIN` and `LAB_TECHNICIAN` roles are authorized to create orders and update results. `VIEWER` is restricted to read-only access.

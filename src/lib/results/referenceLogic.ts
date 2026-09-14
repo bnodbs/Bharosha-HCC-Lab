@@ -45,7 +45,13 @@ export function resolveReferenceRange(
   });
 
   // If multiple apply (e.g. an ALL and a MALE specific), prefer the most specific one
-  // For now, return the first matching active one
+  applicableRanges.sort((a, b) => {
+    // Prefer specific gender over ALL
+    if (a.gender !== GenderApplicability.ALL && b.gender === GenderApplicability.ALL) return -1;
+    if (b.gender !== GenderApplicability.ALL && a.gender === GenderApplicability.ALL) return 1;
+    return 0;
+  });
+
   return applicableRanges[0] || null;
 }
 
